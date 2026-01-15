@@ -1,0 +1,248 @@
+# ============================================================================
+# CLASSIFICACAO POR TIPO DE DADO
+# ============================================================================
+# Esta secao classifica as colunas do dataset por tipo para facilitar
+# a selecao automatica de funcoes de agregacao pelos agentes.
+#
+# - numeric: Colunas quantitativas que devem usar SUM() como agregacao padrao
+# - categorical: Colunas qualitativas que devem usar COUNT() ou COUNT DISTINCT
+# - temporal: Colunas de data/tempo que devem usar COUNT() para agregacao
+# ============================================================================
+column_types:
+  numeric:
+    - Valor_Vendido
+    - Peso_Vendido
+    - Qtd_Vendida
+
+  categorical:
+    - Empresa
+    - Cod_Familia_Produto
+    - Cod_Grupo_Produto
+    - Cod_Linha_Produto
+    - Cod_Vendedor
+    - Cod_Regiao_Vendedor
+    - Cod_Cliente
+    - UF_Cliente
+    - Municipio_Cliente
+    - Cod_Segmento_Cliente
+    - Des_Familia_Produto
+    - Des_Grupo_Produto
+    - Des_Linha_Produto
+    - Des_Regiao_Vendedor
+    - Des_Segmento_Cliente
+
+  temporal:
+    - Data
+
+
+# ============================================================================
+# MAPEAMENTO DE ALIASES (ESTRUTURA ORIGINAL)
+# ============================================================================
+columns:
+  Empresa:
+    - "Nome da empresa"
+    - "Empresa"
+    - "companhia"
+  Mes:
+    - "mês"
+    - "mes"
+    - "mensal"
+    - "mensalmente"
+    - "por mês"
+    - "por mes"
+    - "histórico"
+    - "historico"
+    - "evolução"
+    - "evolucao"
+    - "tendência"
+    - "tendencia"
+    - "ao longo do tempo"
+    - "série temporal"
+    - "serie temporal"
+    - "progressão"
+    - "progressao"
+    - "mês a mês"
+    - "mes a mes"
+    - "comportamento"
+  Ano:
+    - "ano"
+    - "anual"
+    - "anualmente"
+    - "por ano"
+    - "ano a ano"
+  Data:
+    - "Data em que o pedido foi emitido"
+    - "Data de emissão"
+    - "Data do pedido"
+    - "Data da compra"
+    - "quando foi emitido"
+    - "data"
+    - "quando"
+    - "período"
+    - "periodo"
+  Cod_Linha_Produto:
+    - "Código identificador do produto"
+    - "Código do produto"
+    - "ID do produto"
+  Des_Linha_Produto:
+    - "Produto"
+    - "produtos"
+    - "Identificador do item"
+    - "Código da linha do produto"
+    - "Linha do produto"
+    - "código da linha"
+    - "tipo de linha"
+    - "descrição do produto"
+    - "nome do produto"
+  Cod_Familia_Produto:
+    - "Código da família do produto"
+    - "Código da família"
+    - "ID da família"
+  Des_Familia_Produto:
+    - "Família do produto"
+    - "família"
+    - "categoria do produto"
+    - "categoria"
+  Cod_Grupo_Produto:
+    - "Código do grupo do produto"
+    - "Código do grupo"
+    - "ID do grupo"
+  Des_Grupo_Produto:
+    - "Grupo do produto"
+    - "grupo"
+    - "grupo comercial"
+  Peso_Unitario:
+    - "Peso por unidade do produto"
+    - "Peso por unidade"
+    - "peso unitário"
+    - "peso de cada item"
+    - "peso individual"
+  Cod_Vendedor:
+    - "Representante"
+    - "Representantes"
+    - "Código identificador do vendedor"
+    - "Código do vendedor"
+    - "vendedor"
+    - "vendedores"
+    - "id do vendedor"
+    - "quem vendeu"
+  Cod_Regiao_Vendedor:
+    - "Código da região de atuação do vendedor"
+    - "Região do vendedor"
+    - "região de atuação"
+    - "regioes"
+    - "área do vendedor"
+    - "UF vendedor"
+  Cod_Cliente:
+    - "Identificador do cliente"
+    - "Código do cliente"
+    - "cliente"
+    - "clientes"
+    - "ID cliente"
+    - "comprador"
+  UF_Cliente:
+    - "Estado (UF) do cliente"
+    - "UF do cliente"
+    - "Estado do cliente"
+    - "estado"
+    - "estados"
+    - "UF"
+  Municipio_Cliente:
+    - "Cidade do cliente"
+    - "município"
+    - "municipios"
+    - "localidade"
+    - "cidade"
+    - "onde mora o cliente"
+  Cod_Segmento_Cliente:
+    - "Código do segmento ou setor do cliente"
+    - "Segmento do cliente"
+    - "setor"
+    - "tipo de cliente"
+    - "categoria de cliente"
+  Valor_Vendido:
+    - "Valor monetário total da venda"
+    - "Valor vendido"
+    - "faturamento"
+    - "valor total"
+    - "valor da venda"
+    - "receita"
+    - "vendas"
+    - "venda"
+    - "total de vendas"
+    - "valor de vendas"
+  Peso_Vendido:
+    - "Peso total vendido"
+    - "peso total"
+    - "peso das vendas"
+    - "peso entregue"
+  Qtd_Vendida:
+    - "Quantidade de itens vendidos"
+    - "Quantidade vendida"
+    - "quantidade"
+    - "qtd"
+    - "itens vendidos"
+    - "volume vendido"
+    - "quantidade de itens vendidos"
+    - "itens"
+
+metrics:
+  Numero de Compras:
+    - "Quantidade de linhas do dataset"
+    - "Número de pedidos"
+    - "número de compras"
+    - "quantidade de registros"
+    - "quantidade de vendas"
+    - "total de pedidos"
+
+categories:
+  temporal:
+    - "Data"
+  produto:
+    - "Des_Linha_Produto"
+    - "Cod_Familia_Produto"
+    - "Cod_Grupo_Produto"
+    - "Cod_Linha_Produto"
+    - "Peso_Unitario"
+  vendas:
+    - "Valor_Vendido"
+    - "Peso_Vendido"
+    - "Qtd_Vendida"
+  cliente:
+    - "Cod_Cliente"
+    - "UF_Cliente"
+    - "Municipio_Cliente"
+    - "Cod_Segmento_Cliente"
+  vendedor:
+    - "Cod_Vendedor"
+    - "Cod_Regiao_Vendedor"
+
+conventions:
+  Numero de Compras: "Quantidade de linhas do dataset"
+  AC: "Acre"
+  AL: "Alagoas"
+  AP: "Amapá"
+  AM: "Amazonas"
+  BA: "Bahia"
+  CE: "Ceará"
+  DF: "Distrito Federal"
+  ES: "Espírito Santo"
+  GO: "Goiás"
+  MA: "Maranhão"
+  MT: "Mato Grosso"
+  MS: "Mato Grosso do Sul"
+  MG: "Minas Gerais"
+  PA: "Pará"
+  PB: "Paraíba"
+  PR: "Paraná"
+  PE: "Pernambuco"
+  PI: "Piauí"
+  RJ: "Rio de Janeiro"
+  RN: "Rio Grande do Norte"
+  RS: "Rio Grande do Sul"
+  RO: "Rondônia"
+  RR: "Roraima"
+  SC: "Santa Catarina"
+  SP: "São Paulo"
+  SE: "Sergipe"
+  TO: "Tocantins"

@@ -1,0 +1,152 @@
+{
+  "chart_type": "pie",
+  "description": "Proportional composition, participation, market share",
+  "examples": [
+    {
+      "name": "Distribuicao de vendas por estado",
+      "query": "qual a distribuicao de vendas por estado?",
+      "output": {
+        "intent": "distribution",
+        "chart_type": "pie",
+        "title": "Distribuicao de Vendas por Estado",
+        "description": "Participacao percentual de cada estado no total de vendas",
+        "metrics": [
+          {
+            "name": "Valor_Vendido",
+            "aggregation": "sum",
+            "alias": "Vendas Totais",
+            "unit": "R$"
+          }
+        ],
+        "dimensions": [
+          {
+            "name": "UF_Cliente",
+            "alias": "Estado"
+          }
+        ],
+        "filters": {},
+        "top_n": null,
+        "sort": {
+          "by": "Valor_Vendido",
+          "order": "desc"
+        },
+        "visual": {
+          "palette": "Set3",
+          "show_values": true,
+          "orientation": null,
+          "stacked": null,
+          "secondary_chart_type": null,
+          "bins": null
+        },
+        "data_source": "DadosComercial_resumido_v02",
+        "output": {
+          "type": "chart",
+          "summary_template": null
+        },
+        "message": null
+      }
+    },
+    {
+      "name": "Participacao de cada regiao no faturamento total",
+      "query": "participacao de cada regiao no faturamento total",
+      "output": {
+        "intent": "distribution",
+        "chart_type": "pie",
+        "title": "Participacao das Regioes no Faturamento",
+        "description": "Proporcao do faturamento total por regiao",
+        "metrics": [
+          {
+            "name": "Valor_Vendido",
+            "aggregation": "sum",
+            "alias": "Faturamento",
+            "unit": "R$"
+          }
+        ],
+        "dimensions": [
+          {
+            "name": "Des_Regiao_Vendedor",
+            "alias": "Regiao"
+          }
+        ],
+        "filters": {},
+        "top_n": null,
+        "sort": {
+          "by": "Valor_Vendido",
+          "order": "desc"
+        },
+        "visual": {
+          "palette": "Pastel1",
+          "show_values": true,
+          "orientation": null,
+          "stacked": null,
+          "secondary_chart_type": null,
+          "bins": null
+        },
+        "data_source": "DadosComercial_resumido_v02",
+        "output": {
+          "type": "chart",
+          "summary_template": null
+        },
+        "message": null
+      }
+    },
+    {
+      "name": "Concentracao de vendas por categoria de produto",
+      "query": "concentracao de vendas por categoria de produto",
+      "output": {
+        "intent": "distribution",
+        "chart_type": "pie",
+        "title": "Concentracao de Vendas por Categoria",
+        "description": "Percentual de vendas em cada categoria de produto",
+        "metrics": [
+          {
+            "name": "Valor_Vendido",
+            "aggregation": "sum",
+            "alias": "Vendas",
+            "unit": "R$"
+          }
+        ],
+        "dimensions": [
+          {
+            "name": "Des_Grupo_Produto",
+            "alias": "Categoria"
+          }
+        ],
+        "filters": {},
+        "top_n": 10,
+        "sort": {
+          "by": "Valor_Vendido",
+          "order": "desc"
+        },
+        "visual": {
+          "palette": "Set2",
+          "show_values": false,
+          "orientation": null,
+          "stacked": null,
+          "secondary_chart_type": null,
+          "bins": null
+        },
+        "data_source": "DadosComercial_resumido_v02",
+        "output": {
+          "type": "chart",
+          "summary_template": null
+        },
+        "message": null
+      }
+    }
+  ],
+  "validation_notes": {
+    "required_fields": ["metrics (min 1)", "dimensions (exactly 1)", "sort.order (desc for largest first)"],
+    "optional_fields": ["top_n (limit slices)", "filters"],
+    "common_patterns": [
+      "Single dimension creates pie slices",
+      "sort.order = 'desc' to show largest slices first",
+      "top_n can limit number of slices (others grouped as 'Other')",
+      "Keywords: 'distribuicao', 'participacao', 'proporcao', 'percentual', 'concentracao', 'quota'"
+    ],
+    "critical_notes": [
+      "MUST HAVE EXACTLY 1 DIMENSION",
+      "ChartSpecTransformer will remove extra dimensions if present"
+    ]
+  }
+}

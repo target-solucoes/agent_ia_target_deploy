@@ -1,0 +1,159 @@
+{
+  "chart_type": "line",
+  "description": "Temporal trends, historical series, continuous evolution",
+  "examples": [
+    {
+      "name": "Evolucao mensal de vendas em 2016",
+      "query": "evolucao de vendas por mes em 2016",
+      "output": {
+        "intent": "temporal_trend",
+        "chart_type": "line",
+        "title": "Evolucao Mensal de Vendas em 2016",
+        "description": "Tendencia de vendas mes a mes durante o ano de 2016",
+        "metrics": [
+          {
+            "name": "Valor_Vendido",
+            "aggregation": "sum",
+            "alias": "Receita Mensal",
+            "unit": "R$"
+          }
+        ],
+        "dimensions": [
+          {
+            "name": "Mes",
+            "alias": "Mes"
+          }
+        ],
+        "filters": {
+          "Ano": 2025
+        },
+        "top_n": null,
+        "sort": {
+          "by": "Mes",
+          "order": "asc"
+        },
+        "visual": {
+          "palette": "Viridis",
+          "show_values": false,
+          "orientation": null,
+          "stacked": null,
+          "secondary_chart_type": null,
+          "bins": null
+        },
+        "data_source": "DadosComercial_resumido_v02",
+        "output": {
+          "type": "chart",
+          "summary_template": null
+        },
+        "message": null
+      }
+    },
+    {
+      "name": "Historico de vendas desde 2020",
+      "query": "historico de vendas desde 2020",
+      "output": {
+        "intent": "temporal_trend",
+        "chart_type": "line",
+        "title": "Historico de Vendas (2020-2025)",
+        "description": "Serie temporal de vendas desde 2020",
+        "metrics": [
+          {
+            "name": "Valor_Vendido",
+            "aggregation": "sum",
+            "alias": "Vendas Anuais",
+            "unit": "R$"
+          }
+        ],
+        "dimensions": [
+          {
+            "name": "Ano",
+            "alias": "Ano"
+          }
+        ],
+        "filters": {
+          "Ano": {
+            "operator": ">=",
+            "value": 2020
+          }
+        },
+        "top_n": null,
+        "sort": {
+          "by": "Ano",
+          "order": "asc"
+        },
+        "visual": {
+          "palette": "Blues",
+          "show_values": true,
+          "orientation": null,
+          "stacked": null,
+          "secondary_chart_type": null,
+          "bins": null
+        },
+        "data_source": "DadosComercial_resumido_v02",
+        "output": {
+          "type": "chart",
+          "summary_template": null
+        },
+        "message": null
+      }
+    },
+    {
+      "name": "Tendencia de numero de clientes ao longo do ano",
+      "query": "como evoluiu o numero de clientes ao longo do ano?",
+      "output": {
+        "intent": "temporal_trend",
+        "chart_type": "line",
+        "title": "Tendencia de Numero de Clientes",
+        "description": "Evolucao do numero de clientes mes a mes",
+        "metrics": [
+          {
+            "name": "Cod_Cliente",
+            "aggregation": "count",
+            "alias": "Numero de Clientes",
+            "unit": "unidade"
+          }
+        ],
+        "dimensions": [
+          {
+            "name": "Mes",
+            "alias": "Mes"
+          }
+        ],
+        "filters": {},
+        "top_n": null,
+        "sort": {
+          "by": "Mes",
+          "order": "asc"
+        },
+        "visual": {
+          "palette": "Greens",
+          "show_values": false,
+          "orientation": null,
+          "stacked": null,
+          "secondary_chart_type": null,
+          "bins": null
+        },
+        "data_source": "DadosComercial_resumido_v02",
+        "output": {
+          "type": "chart",
+          "summary_template": null
+        },
+        "message": null
+      }
+    }
+  ],
+  "validation_notes": {
+    "required_fields": ["metrics (min 1)", "dimensions (exactly 1, MUST be temporal)", "sort.order (asc for chronological)"],
+    "optional_fields": ["filters (often used for date ranges)", "visual.palette"],
+    "common_patterns": [
+      "Dimension must be temporal: Mes, Ano, Data, Trimestre",
+      "sort.order = 'asc' for chronological ordering",
+      "Filters often specify year or date range",
+      "Keywords: 'evolucao', 'tendencia', 'historico', 'ao longo do tempo', 'desde'"
+    ],
+    "critical_notes": [
+      "TEMPORAL DIMENSION IS MANDATORY",
+      "ChartSpecTransformer will auto-infer temporal dimension if missing"
+    ]
+  }
+}

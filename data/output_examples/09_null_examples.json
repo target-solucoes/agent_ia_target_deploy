@@ -1,0 +1,166 @@
+{
+  "chart_type": null,
+  "description": "No visualization needed - queries asking for specific information or factual lookups",
+  "examples": [
+    {
+      "name": "Qual o nome do cliente 12345",
+      "query": "qual o nome do cliente 12345?",
+      "output": {
+        "intent": "factual_lookup",
+        "chart_type": null,
+        "title": null,
+        "description": null,
+        "metrics": [],
+        "dimensions": [],
+        "filters": {
+          "Cod_Cliente": 12345
+        },
+        "top_n": null,
+        "sort": null,
+        "visual": {
+          "palette": null,
+          "show_values": false,
+          "orientation": null,
+          "stacked": null,
+          "secondary_chart_type": null,
+          "bins": null
+        },
+        "data_source": "DadosComercial_resumido_v02",
+        "output": {
+          "type": "summary_only",
+          "summary_template": "O cliente {Cod_Cliente} e {Nome_Cliente}."
+        },
+        "message": "This query requests specific information and does not require visualization."
+      }
+    },
+    {
+      "name": "Quantos clientes temos no total",
+      "query": "quantos clientes temos no total?",
+      "output": {
+        "intent": "factual_lookup",
+        "chart_type": null,
+        "title": null,
+        "description": null,
+        "metrics": [
+          {
+            "name": "Cod_Cliente",
+            "aggregation": "count",
+            "alias": "Total de Clientes",
+            "unit": "unidade"
+          }
+        ],
+        "dimensions": [],
+        "filters": {},
+        "top_n": null,
+        "sort": null,
+        "visual": {
+          "palette": null,
+          "show_values": false,
+          "orientation": null,
+          "stacked": null,
+          "secondary_chart_type": null,
+          "bins": null
+        },
+        "data_source": "DadosComercial_resumido_v02",
+        "output": {
+          "type": "summary_only",
+          "summary_template": "Existem {count} clientes no total."
+        },
+        "message": "Simple count query - no visualization needed."
+      }
+    },
+    {
+      "name": "Qual foi o valor da venda 789",
+      "query": "qual foi o valor da venda 789?",
+      "output": {
+        "intent": "factual_lookup",
+        "chart_type": null,
+        "title": null,
+        "description": null,
+        "metrics": [
+          {
+            "name": "Valor_Vendido",
+            "aggregation": "sum",
+            "alias": "Valor da Venda",
+            "unit": "R$"
+          }
+        ],
+        "dimensions": [],
+        "filters": {
+          "Cod_Venda": 789
+        },
+        "top_n": null,
+        "sort": null,
+        "visual": {
+          "palette": null,
+          "show_values": false,
+          "orientation": null,
+          "stacked": null,
+          "secondary_chart_type": null,
+          "bins": null
+        },
+        "data_source": "DadosComercial_resumido_v02",
+        "output": {
+          "type": "summary_only",
+          "summary_template": "A venda {Cod_Venda} teve o valor de {Valor_Vendido}."
+        },
+        "message": "Specific value lookup - no chart required."
+      }
+    },
+    {
+      "name": "Qual a receita total do ano",
+      "query": "qual a receita total do ano?",
+      "output": {
+        "intent": "factual_lookup",
+        "chart_type": null,
+        "title": null,
+        "description": null,
+        "metrics": [
+          {
+            "name": "Valor_Vendido",
+            "aggregation": "sum",
+            "alias": "Receita Total",
+            "unit": "R$"
+          }
+        ],
+        "dimensions": [],
+        "filters": {},
+        "top_n": null,
+        "sort": null,
+        "visual": {
+          "palette": null,
+          "show_values": false,
+          "orientation": null,
+          "stacked": null,
+          "secondary_chart_type": null,
+          "bins": null
+        },
+        "data_source": "DadosComercial_resumido_v02",
+        "output": {
+          "type": "summary_only",
+          "summary_template": "A receita total e de {Receita Total}."
+        },
+        "message": "Simple aggregation query - textual response is sufficient."
+      }
+    }
+  ],
+  "validation_notes": {
+    "required_fields": ["chart_type (null)", "message", "output.type (summary_only or text)"],
+    "optional_fields": ["metrics (if calculation needed)", "filters (to specify lookup criteria)"],
+    "common_patterns": [
+      "chart_type is null",
+      "message explains why no chart is needed",
+      "output.type is typically 'summary_only'",
+      "output.summary_template provides text generation template",
+      "Queries asking for specific values, names, or simple facts",
+      "Keywords: 'qual o/a', 'quantos/quantas', 'nome de', specific IDs"
+    ],
+    "critical_notes": [
+      "chart_type MUST be null (Python None)",
+      "message field should explain why no visualization",
+      "output.type should be 'summary_only' or similar",
+      "May still have metrics if calculation is needed",
+      "Use for lookups, simple counts, specific value queries"
+    ]
+  }
+}

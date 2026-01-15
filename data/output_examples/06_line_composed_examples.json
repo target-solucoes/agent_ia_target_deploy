@@ -1,0 +1,540 @@
+{
+  "chart_type": "line_composed",
+  "description": "Comparações temporais e múltiplas séries - Ideal para análises de variação, crescimento e comparações entre categorias ao longo do tempo",
+  "use_cases": {
+    "primary": "Análise de variação temporal (crescimento/queda entre períodos)",
+    "secondary": "Comparação de múltiplas categorias ao longo do tempo",
+    "when_to_use": [
+      "Queries com 'maior/menor aumento/crescimento/queda'",
+      "Comparações temporais entre produtos, clientes, regiões",
+      "Rankings por variação (Top N com maior crescimento)",
+      "Análises de desempenho temporal de múltiplas entidades"
+    ],
+    "intent": "temporal_comparison_analysis",
+    "dimensions_required": 2,
+    "dimension_structure": {
+      "first": "TEMPORAL (Mes, Ano, Data) - eixo X, ordem cronológica",
+      "second": "CATEGÓRICA (Produto, Cliente, Região) - múltiplas linhas/séries"
+    },
+    "sort_behavior": {
+      "by_temporal": "Ordem cronológica simples (ASC)",
+      "by_variation": "Ranking por crescimento/variação calculada",
+      "polarity": {
+        "positive": {
+          "keywords": ["maior", "melhor", "top", "mais"],
+          "order": "desc",
+          "description": "Retorna categorias com MAIOR crescimento (Top N)"
+        },
+        "negative": {
+          "keywords": ["menor", "pior", "bottom", "menos"],
+          "order": "asc",
+          "description": "Retorna categorias com MENOR crescimento ou maiores quedas (Bottom N)"
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "name": "Maior aumento de vendas (Polaridade Positiva)",
+      "query": "quais produtos que tiveram maior aumento de vendas de maio de 2016 para junho de 2016?",
+      "description": "Análise de variação temporal com polaridade POSITIVA - retorna Top 5 produtos com MAIOR crescimento",
+      "output": {
+        "intent": "temporal_comparison_analysis",
+        "chart_type": "line_composed",
+        "title": "Produtos com Maior Aumento de Vendas (Mai-Jun 2016)",
+        "description": "Top 5 produtos com maior crescimento de vendas de maio para junho de 2016. Apresenta Valor Vendido por Mes. Filtros aplicados: Data: ['2016-05-01', '2016-06-30']. Fonte de dados: data/datasets/DadosComercial_resumido_v02.parquet.",
+        "metrics": [
+          {
+            "name": "Valor_Vendido",
+            "aggregation": "sum",
+            "alias": "Valor Vendido",
+            "unit": "R$"
+          }
+        ],
+        "dimensions": [
+          {
+            "name": "Mes",
+            "alias": "Mes",
+            "temporal_granularity": "month"
+          },
+          {
+            "name": "Des_Linha_Produto",
+            "alias": "Des Linha Produto",
+            "temporal_granularity": null
+          }
+        ],
+        "filters": {
+          "Data": ["2016-05-01", "2016-06-30"]
+        },
+        "top_n": 5,
+        "group_top_n": null,
+        "sort": {
+          "by": "variation",
+          "order": "desc"
+        },
+        "visual": {
+          "palette": "tab10",
+          "show_values": false,
+          "orientation": "vertical",
+          "stacked": null,
+          "secondary_chart_type": "line",
+          "bins": null
+        },
+        "data_source": "data/datasets/DadosComercial_resumido_v02.parquet",
+        "output": {
+          "type": "chart_and_summary",
+          "summary_template": "O gráfico apresenta Valor Vendido por Mes. Filtros aplicados: {data}. Intenção detectada: temporal_comparison_analysis."
+        },
+        "message": null,
+        "requires_tabular_data": true,
+        "aggregation": "sum"
+      }
+    },
+    {
+      "name": "Menor aumento de vendas (Polaridade Negativa)",
+      "query": "quais produtos que tiveram menor aumento de vendas de maio de 2016 para junho de 2016?",
+      "description": "Análise de variação temporal com polaridade NEGATIVA - retorna Bottom 5 produtos com MENOR crescimento ou maiores quedas",
+      "output": {
+        "intent": "temporal_comparison_analysis",
+        "chart_type": "line_composed",
+        "title": "Produtos com Menor Aumento de Vendas (Mai-Jun 2016)",
+        "description": "Bottom 5 produtos com menor crescimento (ou maiores quedas) de vendas de maio para junho de 2016. Apresenta Valor Vendido por Mes. Filtros aplicados: Data: ['2016-05-01', '2016-06-30']. Fonte de dados: data/datasets/DadosComercial_resumido_v02.parquet.",
+        "metrics": [
+          {
+            "name": "Valor_Vendido",
+            "aggregation": "sum",
+            "alias": "Valor Vendido",
+            "unit": "R$"
+          }
+        ],
+        "dimensions": [
+          {
+            "name": "Mes",
+            "alias": "Mes",
+            "temporal_granularity": "month"
+          },
+          {
+            "name": "Des_Linha_Produto",
+            "alias": "Des Linha Produto",
+            "temporal_granularity": null
+          }
+        ],
+        "filters": {
+          "Data": ["2016-05-01", "2016-06-30"]
+        },
+        "top_n": 5,
+        "group_top_n": null,
+        "sort": {
+          "by": "variation",
+          "order": "asc"
+        },
+        "visual": {
+          "palette": "tab10",
+          "show_values": false,
+          "orientation": "vertical",
+          "stacked": null,
+          "secondary_chart_type": "line",
+          "bins": null
+        },
+        "data_source": "data/datasets/DadosComercial_resumido_v02.parquet",
+        "output": {
+          "type": "chart_and_summary",
+          "summary_template": "O gráfico apresenta Valor Vendido por Mes. Filtros aplicados: {data}. Intenção detectada: temporal_comparison_analysis."
+        },
+        "message": null,
+        "requires_tabular_data": true,
+        "aggregation": "sum"
+      }
+    },
+    {
+      "name": "Piores produtos em crescimento",
+      "query": "mostre os piores produtos em termos de crescimento no último trimestre",
+      "description": "Polaridade negativa com keyword 'piores' - retorna produtos com pior desempenho",
+      "output": {
+        "intent": "temporal_comparison_analysis",
+        "chart_type": "line_composed",
+        "title": "Piores Produtos por Crescimento (Último Trimestre)",
+        "description": "Produtos com pior desempenho de crescimento no último trimestre",
+        "metrics": [
+          {
+            "name": "Valor_Vendido",
+            "aggregation": "sum",
+            "alias": "Vendas",
+            "unit": "R$"
+          }
+        ],
+        "dimensions": [
+          {
+            "name": "Mes",
+            "alias": "Mes",
+            "temporal_granularity": "month"
+          },
+          {
+            "name": "Des_Linha_Produto",
+            "alias": "Linha de Produto",
+            "temporal_granularity": null
+          }
+        ],
+        "filters": {},
+        "top_n": 5,
+        "group_top_n": null,
+        "sort": {
+          "by": "variation",
+          "order": "asc"
+        },
+        "visual": {
+          "palette": "Dark2",
+          "show_values": false,
+          "orientation": "vertical",
+          "stacked": null,
+          "secondary_chart_type": "line",
+          "bins": null
+        },
+        "data_source": "data/datasets/DadosComercial_resumido_v02.parquet",
+        "output": {
+          "type": "chart_and_summary",
+          "summary_template": "O gráfico apresenta Vendas por Mes. Intenção detectada: temporal_comparison_analysis."
+        },
+        "message": null,
+        "requires_tabular_data": true,
+        "aggregation": "sum"
+      }
+    },
+    {
+      "name": "Evolucao de vendas dos estados SC, PR e RS por mes",
+      "query": "evolucao de vendas dos estados SC, PR e RS por mes",
+      "output": {
+        "intent": "multi_temporal_trend",
+        "chart_type": "line_composed",
+        "title": "Evolucao de Vendas: SC, PR e RS",
+        "description": "Tendencia mensal de vendas comparando os estados SC, PR e RS",
+        "metrics": [
+          {
+            "name": "Valor_Vendido",
+            "aggregation": "sum",
+            "alias": "Vendas Mensais",
+            "unit": "R$"
+          }
+        ],
+        "dimensions": [
+          {
+            "name": "Mes",
+            "alias": "Mes"
+          },
+          {
+            "name": "UF_Cliente",
+            "alias": "Estado"
+          }
+        ],
+        "filters": {
+          "UF_Cliente": ["SC", "PR", "RS"]
+        },
+        "top_n": null,
+        "sort": {
+          "by": "Mes",
+          "order": "asc"
+        },
+        "visual": {
+          "palette": "Set1",
+          "show_values": false,
+          "orientation": null,
+          "stacked": null,
+          "secondary_chart_type": null,
+          "bins": null
+        },
+        "data_source": "DadosComercial_resumido_v02",
+        "output": {
+          "type": "chart",
+          "summary_template": null
+        },
+        "message": null
+      }
+    },
+    {
+      "name": "Tendencia de vendas por produto ao longo do ano",
+      "query": "comparar tendencia de vendas entre produtos ao longo do ano",
+      "output": {
+        "intent": "multi_temporal_trend",
+        "chart_type": "line_composed",
+        "title": "Tendencia de Vendas por Produto",
+        "description": "Evolucao mensal de vendas para cada linha de produto",
+        "metrics": [
+          {
+            "name": "Valor_Vendido",
+            "aggregation": "sum",
+            "alias": "Vendas",
+            "unit": "R$"
+          }
+        ],
+        "dimensions": [
+          {
+            "name": "Mes",
+            "alias": "Mes"
+          },
+          {
+            "name": "Des_Linha_Produto",
+            "alias": "Linha de Produto"
+          }
+        ],
+        "filters": {},
+        "top_n": 5,
+        "sort": {
+          "by": "Mes",
+          "order": "asc"
+        },
+        "visual": {
+          "palette": "Dark2",
+          "show_values": false,
+          "orientation": null,
+          "stacked": null,
+          "secondary_chart_type": null,
+          "bins": null
+        },
+        "data_source": "DadosComercial_resumido_v02",
+        "output": {
+          "type": "chart",
+          "summary_template": null
+        },
+        "message": null
+      }
+    },
+    {
+      "name": "Evolução de vendas dos estados SC, PR e RS por mês (Sem Variação)",
+      "query": "evolução de vendas dos estados SC, PR e RS por mês",
+      "description": "Comparação temporal SEM cálculo de variação - apenas evolução mensal de múltiplas categorias",
+      "output": {
+        "intent": "multi_temporal_trend",
+        "chart_type": "line_composed",
+        "title": "Evolução de Vendas: SC, PR e RS",
+        "description": "Tendência mensal de vendas comparando os estados SC, PR e RS. Apresenta Vendas Mensais por Mes. Filtros aplicados: UF Cliente: ['SC', 'PR', 'RS'].",
+        "metrics": [
+          {
+            "name": "Valor_Vendido",
+            "aggregation": "sum",
+            "alias": "Vendas Mensais",
+            "unit": "R$"
+          }
+        ],
+        "dimensions": [
+          {
+            "name": "Mes",
+            "alias": "Mes",
+            "temporal_granularity": "month"
+          },
+          {
+            "name": "UF_Cliente",
+            "alias": "Estado",
+            "temporal_granularity": null
+          }
+        ],
+        "filters": {
+          "UF_Cliente": ["SC", "PR", "RS"]
+        },
+        "top_n": null,
+        "group_top_n": null,
+        "sort": {
+          "by": "Mes",
+          "order": "asc"
+        },
+        "visual": {
+          "palette": "Set1",
+          "show_values": false,
+          "orientation": "vertical",
+          "stacked": null,
+          "secondary_chart_type": "line",
+          "bins": null
+        },
+        "data_source": "data/datasets/DadosComercial_resumido_v02.parquet",
+        "output": {
+          "type": "chart_and_summary",
+          "summary_template": "O gráfico apresenta Vendas Mensais por Mes. Filtros aplicados: {uf_cliente}. Intenção detectada: multi_temporal_trend."
+        },
+        "message": null,
+        "requires_tabular_data": true,
+        "aggregation": "sum"
+      }
+    },
+    {
+      "name": "Top 10 produtos por crescimento de vendas",
+      "query": "top 10 produtos que mais cresceram em vendas entre janeiro e dezembro",
+      "description": "Polaridade positiva com 'top' e 'mais cresceram' - Top 10 produtos com maior variação positiva",
+      "output": {
+        "intent": "temporal_comparison_analysis",
+        "chart_type": "line_composed",
+        "title": "Top 10 Produtos com Maior Crescimento (Jan-Dez)",
+        "description": "Top 10 produtos com maior crescimento de vendas entre janeiro e dezembro. Apresenta Valor Vendido por Mes.",
+        "metrics": [
+          {
+            "name": "Valor_Vendido",
+            "aggregation": "sum",
+            "alias": "Valor Vendido",
+            "unit": "R$"
+          }
+        ],
+        "dimensions": [
+          {
+            "name": "Mes",
+            "alias": "Mes",
+            "temporal_granularity": "month"
+          },
+          {
+            "name": "Des_Linha_Produto",
+            "alias": "Des Linha Produto",
+            "temporal_granularity": null
+          }
+        ],
+        "filters": {},
+        "top_n": 10,
+        "group_top_n": null,
+        "sort": {
+          "by": "variation",
+          "order": "desc"
+        },
+        "visual": {
+          "palette": "tab20",
+          "show_values": false,
+          "orientation": "vertical",
+          "stacked": null,
+          "secondary_chart_type": "line",
+          "bins": null
+        },
+        "data_source": "data/datasets/DadosComercial_resumido_v02.parquet",
+        "output": {
+          "type": "chart_and_summary",
+          "summary_template": "O gráfico apresenta Valor Vendido por Mes. Intenção detectada: temporal_comparison_analysis."
+        },
+        "message": null,
+        "requires_tabular_data": true,
+        "aggregation": "sum"
+      }
+    },
+    {
+      "name": "Regiões com menos crescimento em faturamento",
+      "query": "quais regiões tiveram menos crescimento em faturamento de 2015 para 2016?",
+      "description": "Polaridade negativa com 'menos crescimento' - Bottom N regiões com pior desempenho",
+      "output": {
+        "intent": "temporal_comparison_analysis",
+        "chart_type": "line_composed",
+        "title": "Regiões com Menos Crescimento (2015-2016)",
+        "description": "Regiões com menor crescimento de faturamento entre 2015 e 2016. Apresenta Faturamento por Ano. Filtros aplicados: Data: ['2015-01-01', '2016-12-31'].",
+        "metrics": [
+          {
+            "name": "Valor_Vendido",
+            "aggregation": "sum",
+            "alias": "Faturamento",
+            "unit": "R$"
+          }
+        ],
+        "dimensions": [
+          {
+            "name": "Ano",
+            "alias": "Ano",
+            "temporal_granularity": "year"
+          },
+          {
+            "name": "Des_Regiao",
+            "alias": "Região",
+            "temporal_granularity": null
+          }
+        ],
+        "filters": {
+          "Data": ["2015-01-01", "2016-12-31"]
+        },
+        "top_n": 5,
+        "group_top_n": null,
+        "sort": {
+          "by": "variation",
+          "order": "asc"
+        },
+        "visual": {
+          "palette": "Pastel1",
+          "show_values": false,
+          "orientation": "vertical",
+          "stacked": null,
+          "secondary_chart_type": "line",
+          "bins": null
+        },
+        "data_source": "data/datasets/DadosComercial_resumido_v02.parquet",
+        "output": {
+          "type": "chart_and_summary",
+          "summary_template": "O gráfico apresenta Faturamento por Ano. Filtros aplicados: {data}. Intenção detectada: temporal_comparison_analysis."
+        },
+        "message": null,
+        "requires_tabular_data": true,
+        "aggregation": "sum"
+      }
+    },
+    {
+      "name": "Evolução trimestral de múltiplas linhas de produto",
+      "query": "como foi a evolução trimestral de vendas para as principais linhas de produto?",
+      "description": "Comparação temporal sem polaridade - mostra evolução de Top N categorias ao longo do tempo",
+      "output": {
+        "intent": "multi_temporal_trend",
+        "chart_type": "line_composed",
+        "title": "Evolução Trimestral por Linha de Produto",
+        "description": "Tendência trimestral de vendas para as principais linhas de produto. Apresenta Vendas por Trimestre.",
+        "metrics": [
+          {
+            "name": "Valor_Vendido",
+            "aggregation": "sum",
+            "alias": "Vendas",
+            "unit": "R$"
+          }
+        ],
+        "dimensions": [
+          {
+            "name": "Trimestre",
+            "alias": "Trimestre",
+            "temporal_granularity": "quarter"
+          },
+          {
+            "name": "Des_Linha_Produto",
+            "alias": "Linha de Produto",
+            "temporal_granularity": null
+          }
+        ],
+        "filters": {},
+        "top_n": 7,
+        "group_top_n": null,
+        "sort": {
+          "by": "Valor_Vendido",
+          "order": "desc"
+        },
+        "visual": {
+          "palette": "tab10",
+          "show_values": false,
+          "orientation": "vertical",
+          "stacked": null,
+          "secondary_chart_type": "line",
+          "bins": null
+        },
+        "data_source": "data/datasets/DadosComercial_resumido_v02.parquet",
+        "output": {
+          "type": "chart_and_summary",
+          "summary_template": "O gráfico apresenta Vendas por Trimestre. Intenção detectada: multi_temporal_trend."
+        },
+        "message": null,
+        "requires_tabular_data": true,
+        "aggregation": "sum"
+      }
+    }
+  ],
+  "validation_notes": {
+    "dimension_requirements": "line_composed SEMPRE requer 2 dimensões: primeira TEMPORAL (Mes, Trimestre, Ano, Data), segunda CATEGÓRICA (Des_Linha_Produto, UF_Cliente, Des_Regiao, etc.)",
+    "temporal_granularity": "A dimensão temporal deve ter temporal_granularity definido (month, quarter, year, date)",
+    "variation_calculation": "Quando intent=temporal_comparison_analysis e sort.by=variation, o sistema calcula automaticamente a variação percentual entre períodos e aplica Top N APÓS o cálculo",
+    "polarity_system": {
+      "positive_keywords": ["maior", "melhor", "top", "mais", "superior", "cresceu"],
+      "negative_keywords": ["menor", "pior", "bottom", "menos", "inferior", "reduziu", "limitado"],
+      "behavior": "Keywords negativos invertem sort.order para 'asc', retornando Bottom N ao invés de Top N"
+    },
+    "filter_expansion": "Filtros temporais parciais ('de maio para junho') são expandidos automaticamente pelo TemporalPeriodExpander para ['2016-05-01', '2016-06-30']",
+    "top_n_application": "Top N é aplicado APÓS cálculo de variação, garantindo que apenas as categorias com maior/menor variação sejam exibidas",
+    "data_structure": "Saída contém N_categories × M_periods linhas. Ex: top_n=5 produtos × 2 meses = 10 linhas",
+    "statistics": "Campo statistics (mean, median, etc.) é calculado apenas sobre valores numéricos da última coluna (métrica agregada)",
+    "intents_supported": [
+      "temporal_comparison_analysis: calcula variação entre períodos, aplica Top N, permite polaridade",
+      "multi_temporal_trend: apenas mostra evolução temporal de múltiplas categorias, sem variação"
+    ]
+  }
+}

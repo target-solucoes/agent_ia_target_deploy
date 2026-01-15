@@ -1,0 +1,163 @@
+{
+  "chart_type": "bar_vertical_composed",
+  "description": "Grouped comparisons across periods or conditions within same categories",
+  "examples": [
+    {
+      "name": "Crescimento de vendas entre 2015 e 2016",
+      "query": "crescimento de vendas entre 2015 e 2016",
+      "output": {
+        "intent": "period_comparison",
+        "chart_type": "bar_vertical_composed",
+        "title": "Crescimento de Vendas: 2015 vs 2016",
+        "description": "Comparacao de vendas entre os anos 2015 e 2016",
+        "metrics": [
+          {
+            "name": "Valor_Vendido",
+            "aggregation": "sum",
+            "alias": "Vendas",
+            "unit": "R$"
+          }
+        ],
+        "dimensions": [
+          {
+            "name": "Ano",
+            "alias": "Ano"
+          },
+          {
+            "name": "UF_Cliente",
+            "alias": "Estado"
+          }
+        ],
+        "filters": {
+          "Ano": [2015, 2025]
+        },
+        "top_n": null,
+        "sort": null,
+        "visual": {
+          "palette": "Set1",
+          "show_values": true,
+          "orientation": "vertical",
+          "stacked": null,
+          "secondary_chart_type": null,
+          "bins": null
+        },
+        "data_source": "DadosComercial_resumido_v02",
+        "output": {
+          "type": "chart",
+          "summary_template": null
+        },
+        "message": null
+      }
+    },
+    {
+      "name": "Vendas dos top 3 estados em janeiro vs fevereiro",
+      "query": "comparar vendas dos 3 maiores estados entre janeiro e fevereiro",
+      "output": {
+        "intent": "period_comparison",
+        "chart_type": "bar_vertical_composed",
+        "title": "Vendas dos Top 3 Estados: Janeiro vs Fevereiro",
+        "description": "Comparacao de vendas dos 3 maiores estados entre janeiro e fevereiro",
+        "metrics": [
+          {
+            "name": "Valor_Vendido",
+            "aggregation": "sum",
+            "alias": "Vendas",
+            "unit": "R$"
+          }
+        ],
+        "dimensions": [
+          {
+            "name": "Mes",
+            "alias": "Mes"
+          },
+          {
+            "name": "UF_Cliente",
+            "alias": "Estado"
+          }
+        ],
+        "filters": {
+          "Mes": [1, 2]
+        },
+        "top_n": 3,
+        "sort": {
+          "by": "Valor_Vendido",
+          "order": "desc"
+        },
+        "visual": {
+          "palette": "Paired",
+          "show_values": true,
+          "orientation": "vertical",
+          "stacked": null,
+          "secondary_chart_type": null,
+          "bins": null
+        },
+        "data_source": "DadosComercial_resumido_v02",
+        "output": {
+          "type": "chart",
+          "summary_template": null
+        },
+        "message": null
+      }
+    },
+    {
+      "name": "Performance de produtos em Q1 vs Q2",
+      "query": "como mudou a performance dos produtos entre Q1 e Q2?",
+      "output": {
+        "intent": "period_comparison",
+        "chart_type": "bar_vertical_composed",
+        "title": "Performance de Produtos: Q1 vs Q2",
+        "description": "Variacao da performance de produtos entre primeiro e segundo trimestre",
+        "metrics": [
+          {
+            "name": "Valor_Vendido",
+            "aggregation": "sum",
+            "alias": "Receita",
+            "unit": "R$"
+          }
+        ],
+        "dimensions": [
+          {
+            "name": "Trimestre",
+            "alias": "Trimestre"
+          },
+          {
+            "name": "Des_Linha_Produto",
+            "alias": "Produto"
+          }
+        ],
+        "filters": {
+          "Trimestre": [1, 2]
+        },
+        "top_n": 5,
+        "sort": {
+          "by": "Valor_Vendido",
+          "order": "desc"
+        },
+        "visual": {
+          "palette": "Set3",
+          "show_values": false,
+          "orientation": "vertical",
+          "stacked": null,
+          "secondary_chart_type": null,
+          "bins": null
+        },
+        "data_source": "DadosComercial_resumido_v02",
+        "output": {
+          "type": "chart",
+          "summary_template": null
+        },
+        "message": null
+      }
+    }
+  ],
+  "validation_notes": {
+    "required_fields": ["metrics (min 1)", "dimensions (exactly 2)"],
+    "optional_fields": ["filters (often used to specify periods)", "sort", "top_n"],
+    "common_patterns": [
+      "First dimension is typically temporal or categorical grouping",
+      "Second dimension is the category being compared",
+      "Filters specify which periods or values to compare",
+      "Keywords: 'entre', 'comparar', 'crescimento', 'variacao', 'mudanca'"
+    ]
+  }
+}

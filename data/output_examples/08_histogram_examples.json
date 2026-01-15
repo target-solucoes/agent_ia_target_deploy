@@ -1,0 +1,136 @@
+{
+  "chart_type": "histogram",
+  "description": "Distribution of numeric values, dispersion, variability",
+  "examples": [
+    {
+      "name": "Distribuicao de valores de venda",
+      "query": "distribuicao de valores de venda",
+      "output": {
+        "intent": "value_distribution",
+        "chart_type": "histogram",
+        "title": "Distribuicao de Valores de Venda",
+        "description": "Frequencia de vendas por faixa de valor",
+        "metrics": [
+          {
+            "name": "Valor_Vendido",
+            "aggregation": "count",
+            "alias": "Frequencia",
+            "unit": "unidade"
+          }
+        ],
+        "dimensions": [],
+        "filters": {},
+        "top_n": null,
+        "sort": null,
+        "visual": {
+          "palette": "Blues",
+          "show_values": false,
+          "orientation": null,
+          "stacked": null,
+          "secondary_chart_type": null,
+          "bins": 20
+        },
+        "data_source": "DadosComercial_resumido_v02",
+        "output": {
+          "type": "chart",
+          "summary_template": null
+        },
+        "message": null
+      }
+    },
+    {
+      "name": "Frequencia de precos dos produtos",
+      "query": "como se distribuem os precos dos produtos?",
+      "output": {
+        "intent": "value_distribution",
+        "chart_type": "histogram",
+        "title": "Distribuicao de Precos",
+        "description": "Frequencia de produtos por faixa de preco",
+        "metrics": [
+          {
+            "name": "Preco_Unitario",
+            "aggregation": "count",
+            "alias": "Numero de Produtos",
+            "unit": "unidade"
+          }
+        ],
+        "dimensions": [],
+        "filters": {},
+        "top_n": null,
+        "sort": null,
+        "visual": {
+          "palette": "Greens",
+          "show_values": true,
+          "orientation": null,
+          "stacked": null,
+          "secondary_chart_type": null,
+          "bins": 15
+        },
+        "data_source": "DadosComercial_resumido_v02",
+        "output": {
+          "type": "chart",
+          "summary_template": null
+        },
+        "message": null
+      }
+    },
+    {
+      "name": "Variabilidade de quantidades vendidas",
+      "query": "variabilidade das quantidades vendidas",
+      "output": {
+        "intent": "value_distribution",
+        "chart_type": "histogram",
+        "title": "Variabilidade de Quantidades Vendidas",
+        "description": "Distribuicao da frequencia de vendas por faixa de quantidade",
+        "metrics": [
+          {
+            "name": "Qtd_Vendida",
+            "aggregation": "count",
+            "alias": "Frequencia de Vendas",
+            "unit": "unidade"
+          }
+        ],
+        "dimensions": [],
+        "filters": {
+          "Qtd_Vendida": {
+            "operator": ">",
+            "value": 0
+          }
+        },
+        "top_n": null,
+        "sort": null,
+        "visual": {
+          "palette": "Oranges",
+          "show_values": false,
+          "orientation": null,
+          "stacked": null,
+          "secondary_chart_type": null,
+          "bins": 30
+        },
+        "data_source": "DadosComercial_resumido_v02",
+        "output": {
+          "type": "chart",
+          "summary_template": null
+        },
+        "message": null
+      }
+    }
+  ],
+  "validation_notes": {
+    "required_fields": ["metrics (min 1)", "dimensions (MUST be empty array)", "visual.bins"],
+    "optional_fields": ["filters", "visual.palette"],
+    "common_patterns": [
+      "metrics.aggregation is typically 'count' (frequency)",
+      "dimensions MUST be empty [] - NO grouping",
+      "visual.bins specifies number of buckets (default 10-30)",
+      "Binning is automatic based on value ranges",
+      "Keywords: 'distribuicao de', 'frequencia', 'variabilidade', 'como se distribuem', 'faixa', 'range'"
+    ],
+    "critical_notes": [
+      "DIMENSIONS MUST BE EMPTY ARRAY []",
+      "Aggregation should be 'count' for frequency",
+      "ChartSpecTransformer will remove dimensions if present",
+      "The metric name indicates which column's distribution to analyze"
+    ]
+  }
+}

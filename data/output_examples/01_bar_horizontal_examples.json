@@ -1,0 +1,199 @@
+{
+  "chart_type": "bar_horizontal",
+  "description": "Rankings, top-N comparisons, identifying greatest/least values",
+  "examples": [
+    {
+      "name": "Top 5 produtos mais vendidos",
+      "query": "quais os top 5 produtos mais vendidos?",
+      "output": {
+        "intent": "ranking",
+        "chart_type": "bar_horizontal",
+        "title": "Top 5 Produtos Mais Vendidos",
+        "description": "Ranking dos 5 produtos com maior volume de vendas",
+        "metrics": [
+          {
+            "name": "Qtd_Vendida",
+            "aggregation": "sum",
+            "alias": "Quantidade Total",
+            "unit": "unidade"
+          }
+        ],
+        "dimensions": [
+          {
+            "name": "Des_Linha_Produto",
+            "alias": "Linha de Produto"
+          }
+        ],
+        "filters": {},
+        "top_n": 5,
+        "sort": {
+          "by": "Qtd_Vendida",
+          "order": "desc"
+        },
+        "visual": {
+          "palette": "Blues",
+          "show_values": true,
+          "orientation": "horizontal",
+          "stacked": null,
+          "secondary_chart_type": null,
+          "bins": null
+        },
+        "data_source": "DadosComercial_resumido_v02",
+        "output": {
+          "type": "chart",
+          "summary_template": null
+        },
+        "message": null
+      }
+    },
+    {
+      "name": "Top 3 clientes em SC (2014)",
+      "query": "top 3 clientes em SC no ano 2014",
+      "output": {
+        "intent": "ranking",
+        "chart_type": "bar_horizontal",
+        "title": "Top 3 Clientes em SC (2014)",
+        "description": "Ranking dos 3 maiores clientes em Santa Catarina por valor de vendas em 2014",
+        "metrics": [
+          {
+            "name": "Valor_Vendido",
+            "aggregation": "sum",
+            "alias": "Valor Total de Vendas",
+            "unit": "R$"
+          }
+        ],
+        "dimensions": [
+          {
+            "name": "Cod_Cliente",
+            "alias": "Cliente"
+          }
+        ],
+        "filters": {
+          "Ano": 2014,
+          "UF_Cliente": "SC"
+        },
+        "top_n": 3,
+        "sort": {
+          "by": "Valor_Vendido",
+          "order": "desc"
+        },
+        "visual": {
+          "palette": "Greens",
+          "show_values": true,
+          "orientation": "horizontal",
+          "stacked": null,
+          "secondary_chart_type": null,
+          "bins": null
+        },
+        "data_source": "DadosComercial_resumido_v02",
+        "output": {
+          "type": "chart_and_summary",
+          "summary_template": "Os {top_n} maiores clientes de {UF_Cliente} em {Ano} totalizaram {total_value} em vendas."
+        },
+        "message": null
+      }
+    },
+    {
+      "name": "10 menores vendedores por receita",
+      "query": "ranking dos 10 vendedores com menor faturamento",
+      "output": {
+        "intent": "ranking",
+        "chart_type": "bar_horizontal",
+        "title": "10 Vendedores com Menor Faturamento",
+        "description": "Ranking dos 10 vendedores com menor receita total",
+        "metrics": [
+          {
+            "name": "Valor_Vendido",
+            "aggregation": "sum",
+            "alias": "Receita Total",
+            "unit": "R$"
+          }
+        ],
+        "dimensions": [
+          {
+            "name": "Cod_Vendedor",
+            "alias": "Vendedor"
+          }
+        ],
+        "filters": {},
+        "top_n": 10,
+        "sort": {
+          "by": "Valor_Vendido",
+          "order": "asc"
+        },
+        "visual": {
+          "palette": "Reds",
+          "show_values": true,
+          "orientation": "horizontal",
+          "stacked": null,
+          "secondary_chart_type": null,
+          "bins": null
+        },
+        "data_source": "DadosComercial_resumido_v02",
+        "output": {
+          "type": "chart",
+          "summary_template": null
+        },
+        "message": null
+      }
+    },
+    {
+      "name": "Maiores estados por vendas (com filtro de valor minimo)",
+      "query": "top 5 estados com vendas acima de 100000",
+      "output": {
+        "intent": "ranking",
+        "chart_type": "bar_horizontal",
+        "title": "Top 5 Estados com Vendas Acima de R$ 100.000",
+        "description": "Ranking dos 5 estados com maiores vendas, considerando apenas vendas acima de R$ 100.000",
+        "metrics": [
+          {
+            "name": "Valor_Vendido",
+            "aggregation": "sum",
+            "alias": "Vendas Totais",
+            "unit": "R$"
+          }
+        ],
+        "dimensions": [
+          {
+            "name": "UF_Cliente",
+            "alias": "Estado"
+          }
+        ],
+        "filters": {
+          "Valor_Vendido": {
+            "operator": ">=",
+            "value": 100000
+          }
+        },
+        "top_n": 5,
+        "sort": {
+          "by": "Valor_Vendido",
+          "order": "desc"
+        },
+        "visual": {
+          "palette": "Viridis",
+          "show_values": true,
+          "orientation": "horizontal",
+          "stacked": null,
+          "secondary_chart_type": null,
+          "bins": null
+        },
+        "data_source": "DadosComercial_resumido_v02",
+        "output": {
+          "type": "chart",
+          "summary_template": null
+        },
+        "message": null
+      }
+    }
+  ],
+  "validation_notes": {
+    "required_fields": ["metrics (min 1)", "dimensions (exactly 1)", "sort.order (typically desc)"],
+    "optional_fields": ["top_n (usually specified)", "filters", "visual.palette"],
+    "common_patterns": [
+      "sort.order = 'desc' for 'maiores', 'top', 'melhores'",
+      "sort.order = 'asc' for 'menores', 'piores', 'bottom'",
+      "top_n extracted from query keywords like 'top 5', '10 maiores'"
+    ]
+  }
+}

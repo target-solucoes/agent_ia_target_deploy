@@ -1,0 +1,146 @@
+{
+  "chart_type": "bar_vertical",
+  "description": "Direct comparisons between specific categories",
+  "examples": [
+    {
+      "name": "Comparar vendas entre SP e RJ",
+      "query": "comparar vendas entre SP e RJ",
+      "output": {
+        "intent": "comparison",
+        "chart_type": "bar_vertical",
+        "title": "Comparacao de Vendas: SP vs RJ",
+        "description": "Comparacao direta entre vendas nos estados de Sao Paulo e Rio de Janeiro",
+        "metrics": [
+          {
+            "name": "Valor_Vendido",
+            "aggregation": "sum",
+            "alias": "Vendas Totais",
+            "unit": "R$"
+          }
+        ],
+        "dimensions": [
+          {
+            "name": "UF_Cliente",
+            "alias": "Estado"
+          }
+        ],
+        "filters": {
+          "UF_Cliente": ["SP", "RJ"]
+        },
+        "top_n": null,
+        "sort": null,
+        "visual": {
+          "palette": "Set2",
+          "show_values": true,
+          "orientation": "vertical",
+          "stacked": null,
+          "secondary_chart_type": null,
+          "bins": null
+        },
+        "data_source": "DadosComercial_resumido_v02",
+        "output": {
+          "type": "chart",
+          "summary_template": null
+        },
+        "message": null
+      }
+    },
+    {
+      "name": "Media de vendas por vendedor",
+      "query": "qual a media de vendas por vendedor?",
+      "output": {
+        "intent": "comparison",
+        "chart_type": "bar_vertical",
+        "title": "Media de Vendas por Vendedor",
+        "description": "Valor medio de vendas para cada vendedor",
+        "metrics": [
+          {
+            "name": "Valor_Vendido",
+            "aggregation": "avg",
+            "alias": "Media de Vendas",
+            "unit": "R$"
+          }
+        ],
+        "dimensions": [
+          {
+            "name": "Cod_Vendedor",
+            "alias": "Vendedor"
+          }
+        ],
+        "filters": {},
+        "top_n": 10,
+        "sort": {
+          "by": "Valor_Vendido",
+          "order": "desc"
+        },
+        "visual": {
+          "palette": "Blues",
+          "show_values": false,
+          "orientation": "vertical",
+          "stacked": null,
+          "secondary_chart_type": null,
+          "bins": null
+        },
+        "data_source": "DadosComercial_resumido_v02",
+        "output": {
+          "type": "chart",
+          "summary_template": null
+        },
+        "message": null
+      }
+    },
+    {
+      "name": "Vendas por regiao",
+      "query": "vendas por regiao",
+      "output": {
+        "intent": "comparison",
+        "chart_type": "bar_vertical",
+        "title": "Vendas por Regiao",
+        "description": "Comparacao de vendas totais entre diferentes regioes",
+        "metrics": [
+          {
+            "name": "Valor_Vendido",
+            "aggregation": "sum",
+            "alias": "Vendas Totais",
+            "unit": "R$"
+          }
+        ],
+        "dimensions": [
+          {
+            "name": "Des_Regiao_Vendedor",
+            "alias": "Regiao"
+          }
+        ],
+        "filters": {},
+        "top_n": null,
+        "sort": {
+          "by": "Valor_Vendido",
+          "order": "desc"
+        },
+        "visual": {
+          "palette": "Viridis",
+          "show_values": true,
+          "orientation": "vertical",
+          "stacked": null,
+          "secondary_chart_type": null,
+          "bins": null
+        },
+        "data_source": "DadosComercial_resumido_v02",
+        "output": {
+          "type": "chart",
+          "summary_template": null
+        },
+        "message": null
+      }
+    }
+  ],
+  "validation_notes": {
+    "required_fields": ["metrics (min 1)", "dimensions (exactly 1)"],
+    "optional_fields": ["filters", "sort", "top_n"],
+    "common_patterns": [
+      "Filters often specify which categories to compare (e.g., UF_Cliente: ['SP', 'RJ'])",
+      "Sort is optional - often omitted for simple comparisons",
+      "Can use different aggregations (sum, avg, count, etc.)"
+    ]
+  }
+}

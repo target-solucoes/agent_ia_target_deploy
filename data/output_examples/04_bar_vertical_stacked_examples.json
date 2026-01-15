@@ -1,0 +1,160 @@
+{
+  "chart_type": "bar_vertical_stacked",
+  "description": "Composition of subcategories within main categories",
+  "examples": [
+    {
+      "name": "Vendas por produto dentro de cada regiao",
+      "query": "composicao de vendas por produto dentro de cada regiao",
+      "output": {
+        "intent": "composition",
+        "chart_type": "bar_vertical_stacked",
+        "title": "Composicao de Vendas por Produto em Cada Regiao",
+        "description": "Distribuicao de vendas por linha de produto dentro de cada regiao",
+        "metrics": [
+          {
+            "name": "Valor_Vendido",
+            "aggregation": "sum",
+            "alias": "Vendas",
+            "unit": "R$"
+          }
+        ],
+        "dimensions": [
+          {
+            "name": "Des_Regiao_Vendedor",
+            "alias": "Regiao"
+          },
+          {
+            "name": "Des_Linha_Produto",
+            "alias": "Linha de Produto"
+          }
+        ],
+        "filters": {},
+        "top_n": null,
+        "sort": {
+          "by": "Valor_Vendido",
+          "order": "desc"
+        },
+        "visual": {
+          "palette": "Set3",
+          "show_values": false,
+          "orientation": "vertical",
+          "stacked": true,
+          "secondary_chart_type": null,
+          "bins": null
+        },
+        "data_source": "DadosComercial_resumido_v02",
+        "output": {
+          "type": "chart",
+          "summary_template": null
+        },
+        "message": null
+      }
+    },
+    {
+      "name": "Top 5 clientes nos top 3 estados",
+      "query": "5 maiores clientes nos 3 maiores estados",
+      "output": {
+        "intent": "composition",
+        "chart_type": "bar_vertical_stacked",
+        "title": "Top 5 Clientes nos Top 3 Estados",
+        "description": "Composicao dos 5 maiores clientes dentro dos 3 estados com maiores vendas",
+        "metrics": [
+          {
+            "name": "Valor_Vendido",
+            "aggregation": "sum",
+            "alias": "Vendas por Cliente",
+            "unit": "R$"
+          }
+        ],
+        "dimensions": [
+          {
+            "name": "UF_Cliente",
+            "alias": "Estado"
+          },
+          {
+            "name": "Cod_Cliente",
+            "alias": "Cliente"
+          }
+        ],
+        "filters": {},
+        "top_n": 3,
+        "sort": {
+          "by": "Valor_Vendido",
+          "order": "desc"
+        },
+        "visual": {
+          "palette": "Paired",
+          "show_values": true,
+          "orientation": "vertical",
+          "stacked": true,
+          "secondary_chart_type": null,
+          "bins": null
+        },
+        "data_source": "DadosComercial_resumido_v02",
+        "output": {
+          "type": "chart",
+          "summary_template": null
+        },
+        "message": null
+      }
+    },
+    {
+      "name": "Distribuicao de segmentos de clientes por estado",
+      "query": "como se distribuem os segmentos de clientes em cada estado?",
+      "output": {
+        "intent": "composition",
+        "chart_type": "bar_vertical_stacked",
+        "title": "Distribuicao de Segmentos por Estado",
+        "description": "Composicao de segmentos de clientes dentro de cada estado",
+        "metrics": [
+          {
+            "name": "Valor_Vendido",
+            "aggregation": "sum",
+            "alias": "Vendas",
+            "unit": "R$"
+          }
+        ],
+        "dimensions": [
+          {
+            "name": "UF_Cliente",
+            "alias": "Estado"
+          },
+          {
+            "name": "Des_Segmento_Cliente",
+            "alias": "Segmento"
+          }
+        ],
+        "filters": {},
+        "top_n": null,
+        "sort": {
+          "by": "Valor_Vendido",
+          "order": "desc"
+        },
+        "visual": {
+          "palette": "Pastel1",
+          "show_values": false,
+          "orientation": "vertical",
+          "stacked": true,
+          "secondary_chart_type": null,
+          "bins": null
+        },
+        "data_source": "DadosComercial_resumido_v02",
+        "output": {
+          "type": "chart",
+          "summary_template": null
+        },
+        "message": null
+      }
+    }
+  ],
+  "validation_notes": {
+    "required_fields": ["metrics (min 1)", "dimensions (exactly 2)", "visual.stacked (true)"],
+    "optional_fields": ["filters", "sort", "top_n"],
+    "common_patterns": [
+      "First dimension = main category (X-axis grouping)",
+      "Second dimension = subcategory (stacking within bars)",
+      "visual.stacked must be true",
+      "Keywords: 'composicao', 'distribuicao dentro de', 'divisao por', 'breakdown'"
+    ]
+  }
+}
