@@ -1934,7 +1934,10 @@ def formatter_node(state: FilterGraphState) -> Dict[str, Any]:
         )
 
         # Calculate total execution time
-        total_time = sum(performance_metrics.values()) + execution_time
+        total_time = sum(v or 0.0 for v in performance_metrics.values()) + (
+            execution_time or 0.0
+        )
+
         formatter_output["performance_metrics"]["total_execution_time"] = total_time
 
         # Also add individual agent times

@@ -84,13 +84,20 @@ class ToolHandlerPie(BaseToolHandler):
         """
         Constrói SQL para pie chart.
 
+        IMPORTANTE: Para pie charts, NAO aplicamos LIMIT no SQL porque a limitacao
+        de categorias com agregacao em "OUTROS" e feita posteriormente no
+        plotly_generator. Isso garante que:
+        1. Todos os dados sejam retornados do banco
+        2. O plotly_generator possa calcular corretamente o total de "OUTROS"
+        3. O grafico reflita Top N + OUTROS com valores precisos
+
         SQL Pattern:
             SELECT dimension, AGG(metric) as metric_alias
             FROM dataset
             WHERE filters
             GROUP BY dimension
             ORDER BY metric_alias DESC
-            LIMIT top_n  -- se presente
+            -- SEM LIMIT: limitacao feita no plotly_generator com "OUTROS"
 
         Args:
             chart_spec: ChartOutput validado
@@ -102,11 +109,11 @@ class ToolHandlerPie(BaseToolHandler):
             >>> chart_spec = {
             ...     "dimensions": [{"name": "category", "alias": "Categoria"}],
             ...     "metrics": [{"name": "revenue", "aggregation": "sum", "alias": "Receita"}],
-            ...     "top_n": 5,
+            ...     "top_n": 10,
             ...     "sort": {"by": "Receita", "order": "desc"}
             ... }
             >>> handler.build_sql(chart_spec)
-            'SELECT category AS "Categoria", SUM(revenue) AS "Receita"\\nFROM dataset\\nGROUP BY category\\nORDER BY "Receita" DESC\\nLIMIT 5'
+            'SELECT category AS "Categoria", SUM(revenue) AS "Receita"\\nFROM dataset\\nGROUP BY category\\nORDER BY "Receita" DESC'
         """
         # Construir cláusulas usando métodos da base
         select_clause = self.build_select_clause(chart_spec)
@@ -114,7 +121,8 @@ class ToolHandlerPie(BaseToolHandler):
         where_clause = self.build_where_clause(chart_spec.get("filters", {}))
         group_by_clause = self.build_group_by_clause(chart_spec)
         order_by_clause = self.build_order_by_clause(chart_spec)
-        limit_clause = self.build_limit_clause(chart_spec)
+        # NAO aplicar LIMIT no SQL para pie charts - limitacao sera feita no plotly_generator
+        # com agregacao correta em "OUTROS"
 
         # Montar SQL final
         sql_parts = [select_clause, from_clause]
@@ -125,11 +133,10 @@ class ToolHandlerPie(BaseToolHandler):
             sql_parts.append(group_by_clause)
         if order_by_clause:
             sql_parts.append(order_by_clause)
-        if limit_clause:
-            sql_parts.append(limit_clause)
+        # Removido: limit_clause - pie charts nao devem ter LIMIT no SQL
 
         sql = "\n".join(sql_parts)
-        logger.debug(f"Generated SQL for pie chart:\n{sql}")
+        logger.debug(f"Generated SQL for pie chart (no LIMIT - handled by plotly_generator):\n{sql}")
 
         return sql
 

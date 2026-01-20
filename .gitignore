@@ -62,4 +62,12 @@ Thumbs.db
 data/datasets/*.parquet
 !data/mappings/alias.yaml
 temp.md
+DEPLOY.md
+
+# Docker
+docker-compose.override.yml
+docker-compose.prod.yml
+
+# Output
+data/output/
 

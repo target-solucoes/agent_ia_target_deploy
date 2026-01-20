@@ -75,7 +75,7 @@ class VisualizationConfig:
         Retorna o limite de categorias para um tipo específico de gráfico.
 
         Por padrão, todos os tipos usam max_categories, mas este método
-        permite customização futura por tipo de gráfico se necessário.
+        permite customização por tipo de gráfico quando necessário.
 
         Args:
             chart_type: Tipo de gráfico (ex: "bar_horizontal", "pie", etc)
@@ -88,7 +88,7 @@ class VisualizationConfig:
             >>> config.get_limit_for_chart_type("bar_horizontal")
             15
             >>> config.get_limit_for_chart_type("pie")
-            15
+            10
             >>> config.get_limit_for_chart_type("bar_vertical_composed")
             5
         """
@@ -96,6 +96,12 @@ class VisualizationConfig:
         # Comparações temporais funcionam melhor com menos categorias
         if chart_type == "bar_vertical_composed":
             return 5
+
+        # Override específico para pie charts
+        # Gráficos de pizza funcionam melhor com Top 10 + OUTROS
+        # para melhor legibilidade e visualização de proporções
+        if chart_type == "pie":
+            return 10
 
         # Outros tipos usam padrão global
         return self.max_categories
