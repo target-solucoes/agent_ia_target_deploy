@@ -1,107 +1,268 @@
-# Deploy Guide - Analytics Chatbot
+# 🚀 Deploy Guide — Analytics / Agent IA Chatbot
 
-## Pre-requisitos
+Este guia descreve **todo o fluxo de deploy**, tanto para **desenvolvimento local** quanto para **produção**, já **atualizado com os repositórios e imagens corretas**.
 
-- **Docker** >= 20.10
-- **Docker Compose** >= 2.0
-- **API Key:**
-  - Google Gemini API Key (obrigatoria)
+---
+
+## 📦 Pre-requisitos
+
+- **Docker** ≥ 20.10  
+- **Docker Compose** ≥ 2.0  
+- **API Keys**
+  - Google **Gemini API Key** (obrigatória)
   - Supabase (opcional, para logging)
 
-## Arquitetura
+---
 
-A imagem Docker e **autossuficiente**:
+## 🏗️ Arquitetura
+
+A aplicação é distribuída como uma **imagem Docker autossuficiente**:
+
 - Dataset embutido durante o build
-- Sem necessidade de upload manual de arquivos
-- Configuracao apenas via variavel de ambiente `GEMINI_API_KEY`
+- Nenhum upload manual de arquivos
+- Configuração exclusivamente via variável de ambiente:
+  - `GEMINI_API_KEY`
 
-## Deploy Local (Desenvolvimento)
+---
 
-### 1. Clonar e Configurar
+# 🧪 Deploy Local (Desenvolvimento)
+
+Use este modo para **desenvolvimento, testes e debug**, com build local da imagem.
+
+---
+
+## 1️⃣ Clonar e Configurar o Projeto
 
 ```bash
-# Clonar repositorio
-git clone https://github.com/target-solucoes/analytics-chatbot.git
-cd analytics-chatbot
+# Clonar o repositório atualizado
+git clone https://github.com/target-solucoes/agent_ia_target_deploy.git
+cd agent_ia_target_deploy
+````
 
-# Criar arquivo de ambiente
+---
+
+## 2️⃣ Configurar Variáveis de Ambiente
+
+Crie o arquivo `.env` na raiz do projeto:
+
+```bash
 cp .env.example .env
 ```
 
-### 2. Configurar Variavel de Ambiente
-
-Edite o arquivo `.env` com sua chave de API:
+Edite o arquivo `.env` e informe sua chave da API Gemini:
 
 ```bash
 GEMINI_API_KEY=your-gemini-api-key-here
 ```
 
-### 3. Build e Execucao
+> 🔐 **Boa prática**: nunca versionar o arquivo `.env`.
+
+---
+
+## 3️⃣ Build e Execução Local
+
+### Linux / macOS / Windows (Docker Compose)
 
 ```bash
-# Build e iniciar container
-docker-compose up --build
-
-# Ou em modo detached (background)
-docker-compose up --build -d
+docker compose up --build
 ```
 
-### 4. Acessar Aplicacao
-
-Abra o navegador em: http://localhost:8501
-
-## Deploy em Producao (GHCR)
-
-### 1. Autenticacao no Registry
+Ou em modo background:
 
 ```bash
-# Criar token em: GitHub Settings > Developer settings > Personal access tokens
-echo $GITHUB_TOKEN | docker login ghcr.io -u USERNAME --password-stdin
+docker compose up --build -d
 ```
 
-### 2. Pull da Imagem
+📌 O Docker Compose irá:
 
-```bash
-docker pull ghcr.io/target-solucoes/analytics-chatbot:latest
+* Construir a imagem localmente
+* Subir o container com o dataset embutido
+* Injetar as variáveis do `.env`
+
+---
+
+## 4️⃣ Acessar a Aplicação (Local)
+
+Abra o navegador em:
+
+```
+http://localhost:8501
 ```
 
-### 3. Executar Container
+---
 
-```bash
-docker run -d \
-  --name analytics-chatbot \
-  -p 8501:8501 \
-  -e GEMINI_API_KEY=your-gemini-api-key \
-  -v ./logs:/app/logs \
-  -v ./data/output:/app/data/output \
-  --restart unless-stopped \
-  ghcr.io/target-solucoes/analytics-chatbot:latest
+# 🚀 Deploy em Produção (GHCR)
+
+Este modo executa o chatbot **diretamente a partir do GitHub Container Registry (GHCR)**, **sem build local**.
+
+---
+
+## 🔧 Pré-requisitos Adicionais
+
+* GitHub **Personal Access Token (PAT)** com permissão:
+
+  * `read:packages`
+
+---
+
+## 1️⃣ Autenticação no GitHub Container Registry
+
+> ⚠️ Obrigatório, mesmo com repositório público.
+
+### 1.1 Criar um Personal Access Token (PAT)
+
+No GitHub:
+
+```
+Settings → Developer settings → Personal access tokens → Tokens (classic)
 ```
 
-### 4. Ou usar Docker Compose
+Permissão mínima:
 
-Crie um `docker-compose.prod.yml`:
+* ✅ `read:packages`
+
+---
+
+### 1.2 Login no GHCR (PowerShell / Terminal)
+
+```powershell
+docker login ghcr.io -u SEU_USUARIO_GITHUB
+```
+
+👉 Use o **token** como senha.
+Resposta esperada:
+
+```
+Login Succeeded
+```
+
+---
+
+## 2️⃣ Pull da Imagem (Versão Imutável)
+
+```powershell
+docker pull ghcr.io/target-solucoes/agent_ia_chatbot_target:sha-ca16b54
+```
+
+---
+
+## 3️⃣ Executar o Container (Produção)
+
+### 3.1 (Opcional) Remover container anterior
+
+```powershell
+docker rm -f analytics-chatbot
+```
+
+---
+
+### 3.2 Subir o container (PowerShell)
+
+```powershell
+docker run -d `
+  --name analytics-chatbot `
+  -p 8501:8501 `
+  -e GEMINI_API_KEY=YOUR_GEMINI_API_KEY `
+  -v ${PWD}/logs:/app/logs `
+  -v ${PWD}/data/output:/app/data/output `
+  --restart unless-stopped `
+  ghcr.io/target-solucoes/agent_ia_chatbot_target:sha-ca16b54
+```
+
+📌 Observações importantes:
+
+* Use **crase (`)** para quebra de linha no PowerShell
+* `${PWD}` garante caminho absoluto no Windows
+* `--restart unless-stopped` habilita auto-restart
+
+---
+
+## 4️⃣ Acessar a Aplicação (Produção)
+
+Abra o navegador em:
+
+```
+http://localhost:8501
+```
+
+---
+
+## 5️⃣ Verificação e Diagnóstico
+
+### 🔍 Verificar container em execução
+
+```powershell
+docker ps
+```
+
+---
+
+### 📄 Ver logs da aplicação
+
+```powershell
+docker logs analytics-chatbot
+```
+
+Ou acompanhar em tempo real:
+
+```powershell
+docker logs -f analytics-chatbot
+```
+
+---
+
+### 🔌 Verificar mapeamento de portas
+
+```powershell
+docker port analytics-chatbot
+```
+
+Saída esperada:
+
+```
+8501/tcp -> 0.0.0.0:8501
+```
+
+---
+
+## 6️⃣ Alternativa — Docker Compose (Produção)
+
+### 6.1 Criar `docker-compose.prod.yml`
 
 ```yaml
 services:
   analytics-chatbot:
-    image: ghcr.io/target-solucoes/analytics-chatbot:latest
+    image: ghcr.io/target-solucoes/agent_ia_chatbot_target:sha-ca16b54
     container_name: analytics-chatbot
     ports:
       - "8501:8501"
     environment:
-      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      GEMINI_API_KEY: ${GEMINI_API_KEY}
     volumes:
       - ./logs:/app/logs
       - ./data/output:/app/data/output
     restart: unless-stopped
 ```
 
-Execute com:
+---
 
-```bash
-GEMINI_API_KEY=your-key docker-compose -f docker-compose.prod.yml up -d
+### 6.2 Subir com variável de ambiente
+
+```powershell
+$env:GEMINI_API_KEY="YOUR_GEMINI_API_KEY"
+docker compose -f docker-compose.prod.yml up -d
 ```
+
+---
+
+## ✅ Resumo Final
+
+| Ambiente        | Estratégia                                |
+| --------------- | ----------------------------------------- |
+| Desenvolvimento | Build local (`docker compose up --build`) |
+| Produção        | Imagem GHCR versionada                    |
+| Configuração    | Apenas `GEMINI_API_KEY`                   |
+| Porta padrão    | `8501`                                    |
 
 ## Comandos de Manutencao
 
