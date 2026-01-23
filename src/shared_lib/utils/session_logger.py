@@ -322,7 +322,7 @@ class SessionLogger:
         """
         Sync session data to Supabase (if configured).
 
-        Runs asynchronously to not block the main application.
+        Runs synchronously to ensure data persistence.
         Errors are logged but do not raise exceptions.
 
         Args:
@@ -331,15 +331,23 @@ class SessionLogger:
         try:
             from .logger_supabase import sync_log_to_supabase
 
-            # Non-blocking sync - errors won't crash the app
-            sync_log_to_supabase(data)
+            session_id = data.get("session_metadata", {}).get("session_id", "unknown")
+
+            # Sync to Supabase - errors won't crash the app
+            success = sync_log_to_supabase(data)
+
+            if not success:
+                logger.warning(
+                    f"Supabase sync returned False for session_id={session_id}. "
+                    f"Check logger_supabase logs for details."
+                )
 
         except ImportError:
             # Supabase package not installed - skip silently
             pass
         except Exception as e:
-            # Log error but don't propagate - sync is not critical
-            logger.debug(f"Supabase sync skipped: {e}")
+            # Log error at WARNING level so it's visible
+            logger.warning(f"Supabase sync failed: {e}")
 
     def _calculate_session_summary(self, queries: List[Dict]) -> Dict:
         """

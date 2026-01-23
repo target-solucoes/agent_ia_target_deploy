@@ -57,6 +57,72 @@ class SupabaseLogger:
 
         logger.info("Supabase client initialized successfully")
 
+    def test_connection(self) -> Dict[str, Any]:
+        """
+        Test Supabase connection and permissions by attempting operations.
+
+        Returns:
+            Dict with diagnostic information about connection status
+        """
+        results = {
+            "connection": False,
+            "can_select_session_logs": False,
+            "can_insert_session_logs": False,
+            "can_select_query_logs": False,
+            "errors": [],
+            "supabase_url": self.supabase_url,
+            "key_prefix": self.supabase_key[:20] + "..." if self.supabase_key else None,
+        }
+
+        # Test 1: Basic connection with SELECT on session_logs
+        try:
+            response = self.supabase.table("session_logs").select("session_id").limit(1).execute()
+            results["connection"] = True
+            results["can_select_session_logs"] = True
+            if hasattr(response, 'error') and response.error:
+                results["can_select_session_logs"] = False
+                results["errors"].append(f"session_logs SELECT error: {response.error}")
+        except Exception as e:
+            results["errors"].append(f"session_logs SELECT exception: {str(e)}")
+
+        # Test 2: Test INSERT on session_logs with a test record
+        try:
+            import uuid
+            test_session_id = f"_test_{uuid.uuid4().hex[:8]}"
+            test_data = {
+                "session_id": test_session_id,
+                "user_email": "test@diagnostic.local",
+                "session_start": "2024-01-01T00:00:00",
+                "session_status": "test",
+                "total_queries": 0,
+            }
+            response = self.supabase.table("session_logs").insert(test_data).execute()
+
+            if hasattr(response, 'error') and response.error:
+                results["can_insert_session_logs"] = False
+                results["errors"].append(f"session_logs INSERT error: {response.error}")
+            elif response.data:
+                results["can_insert_session_logs"] = True
+                # Clean up test record
+                self.supabase.table("session_logs").delete().eq("session_id", test_session_id).execute()
+            else:
+                results["can_insert_session_logs"] = False
+                results["errors"].append("session_logs INSERT returned no data (silent failure)")
+        except Exception as e:
+            results["errors"].append(f"session_logs INSERT exception: {str(e)}")
+
+        # Test 3: Test SELECT on query_logs
+        try:
+            response = self.supabase.table("query_logs").select("session_id").limit(1).execute()
+            results["can_select_query_logs"] = True
+            if hasattr(response, 'error') and response.error:
+                results["can_select_query_logs"] = False
+                results["errors"].append(f"query_logs SELECT error: {response.error}")
+        except Exception as e:
+            results["errors"].append(f"query_logs SELECT exception: {str(e)}")
+
+        return results
+
     def _detect_schema_version(self) -> str:
         """
         Detect the schema version by attempting a test query.
@@ -81,7 +147,7 @@ class SupabaseLogger:
             # If no error, v2 schema is available
             self._schema_version = "v2"
             logger.info(
-                "✅ Supabase schema: v2 detected (per-agent token columns available)"
+                "Supabase schema: v2 detected (per-agent token columns available)"
             )
             return "v2"
 
@@ -92,7 +158,7 @@ class SupabaseLogger:
             if "filter_classifier_input_tokens" in error_msg or "PGRST204" in error_msg:
                 self._schema_version = "v1"
                 logger.warning(
-                    "⚠️ Supabase schema: v1 detected (per-agent columns NOT available). "
+                    "Supabase schema: v1 detected (per-agent columns NOT available). "
                     "Using legacy schema. Run migrations/add_per_agent_token_tracking.sql to upgrade."
                 )
                 return "v1"
@@ -244,8 +310,15 @@ class SupabaseLogger:
                 session_id = meta.get("session_id")
 
                 if not session_id:
-                    logger.warning("⚠️ Aviso: Log ignorado por falta de session_id.")
+                    logger.warning("Supabase sync skipped: missing session_id")
                     return False
+
+                # Log sync attempt for debugging
+                logger.debug(
+                    f"Supabase sync starting: session_id={session_id}, "
+                    f"user_email={meta.get('user_email')}, "
+                    f"queries_count={len(queries_list)}"
+                )
 
                 # Map to session_logs table schema
                 session_data = {
@@ -276,10 +349,25 @@ class SupabaseLogger:
                     session_data["session_end"] = session_end
 
                 # Step 1: Persist session (parent) - MUST run before queries
-                self.supabase.table("session_logs").upsert(
+                session_response = self.supabase.table("session_logs").upsert(
                     session_data, on_conflict="session_id"
                 ).execute()
-                logger.debug(f"Session {session_id} upserted to session_logs")
+
+                # Check for errors in session_logs upsert
+                if hasattr(session_response, 'error') and session_response.error:
+                    logger.error(
+                        f"Supabase session_logs upsert failed: {session_response.error}"
+                    )
+                    return False
+
+                # Validate data was inserted
+                if not session_response.data:
+                    logger.warning(
+                        f"Supabase session_logs upsert returned no data for session_id={session_id}. "
+                        f"This may indicate a silent failure. Check RLS policies and permissions."
+                    )
+                else:
+                    logger.debug(f"Session {session_id} upserted to session_logs successfully")
 
                 # Step 2: Persist queries (children) in batch
                 if queries_list:
@@ -298,24 +386,41 @@ class SupabaseLogger:
                         queries_data_to_insert.append(q_data)
 
                     # Batch upsert for performance
-                    self.supabase.table("query_logs").upsert(
+                    queries_response = self.supabase.table("query_logs").upsert(
                         queries_data_to_insert,
                         on_conflict="session_id,query_sequence_id",
                     ).execute()
 
-                    logger.debug(
-                        f"{len(queries_data_to_insert)} queries upserted to query_logs "
-                        f"(schema: {schema_version})"
-                    )
+                    # Check for errors in query_logs upsert
+                    if hasattr(queries_response, 'error') and queries_response.error:
+                        logger.error(
+                            f"Supabase query_logs upsert failed: {queries_response.error}"
+                        )
+                        return False
+
+                    # Validate data was inserted
+                    if not queries_response.data:
+                        logger.warning(
+                            f"Supabase query_logs upsert returned no data for session_id={session_id}. "
+                            f"This may indicate a silent failure (FK constraint, RLS, or permissions issue)."
+                        )
+                    else:
+                        logger.debug(
+                            f"{len(queries_data_to_insert)} queries upserted to query_logs "
+                            f"(schema: {schema_version})"
+                        )
 
                 logger.info(
-                    f"✅ Log sincronizado: {session_id} (Status: {meta.get('session_status')})"
+                    f"Log synced to Supabase: {session_id} (Status: {meta.get('session_status')})"
                 )
                 return True
 
             except Exception as e:
-                # Silent error logging - should not crash the main application
-                logger.error(f"❌ Erro de sincronização Supabase: {e}", exc_info=True)
+                # Log detailed error for debugging
+                logger.error(
+                    f"Supabase sync error for session_id={json_log.get('session_metadata', {}).get('session_id')}: {e}",
+                    exc_info=True
+                )
                 return False
 
 

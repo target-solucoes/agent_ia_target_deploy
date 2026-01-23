@@ -20,6 +20,8 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+migrations/
+scripts/
 
 # Virtual Environment
 venv/
@@ -71,3 +73,5 @@ docker-compose.prod.yml
 # Output
 data/output/
 
+# Temp files
+temp_2.md
