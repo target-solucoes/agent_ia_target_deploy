@@ -4,6 +4,7 @@ __pycache__/
 *$py.class
 *.so
 .Python
+.claude/
 build/
 develop-eggs/
 dist/
@@ -39,6 +40,7 @@ env/
 # Logs
 logs/*.log
 *.log
+/logs
 
 # Session logs (structured JSON logging)
 logs/sessions/

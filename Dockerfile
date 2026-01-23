@@ -20,25 +20,25 @@ RUN pip install --no-cache-dir --upgrade pip && \
         langgraph==1.0.2 \
         langchain==1.0.3 \
         langchain-core==1.0.2 \
-        langchain-google-genai \
-        langgraph-checkpoint \
-        pyarrow \
-        pyyaml \
-        rapidfuzz \
-        unidecode \
-        pydantic \
-        pydantic-settings \
-        python-dotenv \
-        duckdb \
-        pandas \
-        psutil \
-        pandera \
-        plotly \
-        kaleido \
-        streamlit \
-        scipy \
-        supabase \
-        rich
+        langchain-google-genai>=2.1.0,<3.0.0 \
+        langgraph-checkpoint==2.1.1 \
+        pyarrow>=21.0.0 \
+        pyyaml==6.0.2 \
+        rapidfuzz==3.10.1 \
+        unidecode==1.3.8 \
+        pydantic==2.11.7 \
+        pydantic-settings==2.10.1 \
+        python-dotenv==1.0.1 \
+        duckdb==1.3.2 \
+        pandas>=2.2.0 \
+        psutil>=5.9.8 \
+        pandera>=0.17.2 \
+        plotly==5.18.0 \
+        kaleido==0.2.1 \
+        streamlit==1.49.1 \
+        scipy==1.10.1 \
+        supabase==2.10.0 \
+        rich==13.9.4
 
 # ---------------------------
 # Stage 2: Runtime
