@@ -227,11 +227,20 @@ Saída esperada:
 
 ---
 
+````md
 ## 6️⃣ Alternativa — Docker Compose (Produção)
+
+Esta abordagem é indicada para **ambiente produtivo**, mantendo o `docker-compose` limpo e injetando as variáveis de ambiente **diretamente no comando de execução**, sem versionar segredos.
+
+---
 
 ### 6.1 Criar `docker-compose.prod.yml`
 
+Crie o arquivo `docker-compose.prod.yml` no diretório do projeto:
+
 ```yaml
+version: "3.9"
+
 services:
   analytics-chatbot:
     image: ghcr.io/target-solucoes/agent_ia_target_deploy:sha-2ea967f
@@ -240,20 +249,82 @@ services:
       - "8501:8501"
     environment:
       GEMINI_API_KEY: ${GEMINI_API_KEY}
+      SUPABASE_URL: ${SUPABASE_URL}
+      SUPABASE_API_KEY: ${SUPABASE_API_KEY}
     volumes:
       - ./logs:/app/logs
       - ./data/output:/app/data/output
     restart: unless-stopped
+````
+
+📌 Observações:
+
+* As variáveis **não possuem valor fixo** no arquivo, apenas placeholders
+* Os diretórios `logs/` e `data/output/` serão criados automaticamente se não existirem
+* Nenhuma chave sensível fica versionada no repositório
+
+---
+
+### 6.2 Subir o serviço com variáveis de ambiente (Windows / PowerShell)
+
+Execute no mesmo diretório do arquivo:
+
+```powershell
+$env:GEMINI_API_KEY="YOUR_GEMINI_API_KEY"
+$env:SUPABASE_URL="https://your-project.supabase.co"
+$env:SUPABASE_API_KEY="YOUR_SUPABASE_API_KEY"
+
+docker compose -f docker-compose.prod.yml up -d
 ```
 
 ---
 
-### 6.2 Subir com variável de ambiente
+### 6.3 Subir o serviço com variáveis de ambiente (Linux / macOS)
 
-```powershell
-$env:GEMINI_API_KEY="YOUR_GEMINI_API_KEY"
+```bash
+GEMINI_API_KEY=YOUR_GEMINI_API_KEY \
+SUPABASE_URL=https://your-project.supabase.co \
+SUPABASE_API_KEY=YOUR_SUPABASE_API_KEY \
 docker compose -f docker-compose.prod.yml up -d
 ```
+
+---
+
+### 6.4 Acessar a aplicação
+
+Após o container subir corretamente:
+
+```text
+http://localhost:8501
+```
+
+---
+
+### 6.5 Parar o serviço
+
+```bash
+docker compose -f docker-compose.prod.yml down
+```
+
+---
+
+### 6.6 Atualização de variáveis de ambiente
+
+Sempre que alterar qualquer variável sensível:
+
+```bash
+docker compose -f docker-compose.prod.yml down
+# redefinir variáveis de ambiente
+docker compose -f docker-compose.prod.yml up -d
+```
+
+---
+
+### ⚠️ Boas práticas em produção
+
+* Nunca versionar chaves de API no `docker-compose`
+* Prefira `.env` ou secrets em orquestradores (Swarm / Kubernetes) em ambientes maiores
+* Utilize `restart: unless-stopped` para garantir resiliência após reboot
 
 ---
 
