@@ -226,16 +226,9 @@ Saída esperada:
 ```
 
 ---
-
-````md
 ## 6️⃣ Alternativa — Docker Compose (Produção)
-
 Esta abordagem é indicada para **ambiente produtivo**, mantendo o `docker-compose` limpo e injetando as variáveis de ambiente **diretamente no comando de execução**, sem versionar segredos.
-
----
-
 ### 6.1 Criar `docker-compose.prod.yml`
-
 Crie o arquivo `docker-compose.prod.yml` no diretório do projeto:
 
 ```yaml
@@ -255,6 +248,7 @@ services:
       - ./logs:/app/logs
       - ./data/output:/app/data/output
     restart: unless-stopped
+
 ````
 
 📌 Observações:
