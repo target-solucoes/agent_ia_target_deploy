@@ -1,7 +1,7 @@
 # 🚀 Deploy Guide — Analytics / Agent IA Chatbot
 
 Este guia descreve **todo o fluxo de deploy**, tanto para **desenvolvimento local** quanto para **produção**, já **atualizado com os repositórios e imagens corretas**.
-
+test
 ---
 
 ## 📦 Pre-requisitos
