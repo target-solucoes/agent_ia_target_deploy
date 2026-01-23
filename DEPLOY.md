@@ -141,7 +141,7 @@ Login Succeeded
 ## 2️⃣ Pull da Imagem (Versão Imutável)
 
 ```powershell
-docker pull ghcr.io/target-solucoes/agent_ia_chatbot_target:sha-ca16b54
+docker pull ghcr.io/target-solucoes/agent_ia_target_deploy:sha-2ea967f
 ```
 
 ---
@@ -163,10 +163,12 @@ docker run -d `
   --name analytics-chatbot `
   -p 8501:8501 `
   -e GEMINI_API_KEY=YOUR_GEMINI_API_KEY `
+  -e SUPABASE_API_KEY=YOUR_SUPABASE_API_KEY `
+  -e SUPABASE_URL=YOUR_SUPABASE_URL_KEY `
   -v ${PWD}/logs:/app/logs `
   -v ${PWD}/data/output:/app/data/output `
   --restart unless-stopped `
-  ghcr.io/target-solucoes/agent_ia_chatbot_target:sha-ca16b54
+  ghcr.io/target-solucoes/agent_ia_target_deploy:sha-2ea967f
 ```
 
 📌 Observações importantes:
@@ -232,7 +234,7 @@ Saída esperada:
 ```yaml
 services:
   analytics-chatbot:
-    image: ghcr.io/target-solucoes/agent_ia_chatbot_target:sha-ca16b54
+    image: ghcr.io/target-solucoes/agent_ia_target_deploy:sha-2ea967f
     container_name: analytics-chatbot
     ports:
       - "8501:8501"
